@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import { FaGithubAlt, FaPlus, FaSpinner } from 'react-icons/fa'
 
 import api from '../../services/api'
-import { Container, Form, SubmitButton } from './styles'
+import { Container, Form, SubmitButton, List } from './styles'
 
 class Main extends Component {
   state = {
@@ -10,6 +11,19 @@ class Main extends Component {
     repositories: [],
     loading: false,
   }
+  componentDidMount() {
+    const repositories = localStorage.getItem('repositories')
+    if (repositories) {
+      this.setState({ repositories: JSON.parse(repositories) })
+    }
+  }
+  componentDidUpdate(_, prevState) {
+    const { repositories } = this.state
+    if (prevState.repositories !== repositories) {
+      localStorage.setItem('repositories', JSON.stringify(repositories))
+    }
+  }
+
   hundleInputChange = e => {
     this.setState({ newRepository: e.target.value })
   }
@@ -30,7 +44,7 @@ class Main extends Component {
     })
   }
   render() {
-    const { newRepository, loading } = this.state
+    const { newRepository, loading, repositories } = this.state
     return (
       <Container>
         <h1>
@@ -52,6 +66,16 @@ class Main extends Component {
             )}
           </SubmitButton>
         </Form>
+        <List>
+          {repositories.map(repository => (
+            <li key={repository.name}>
+              <span>{repository.name}</span>
+              <Link to={`/repository/${encodeURIComponent(repository.name)}`}>
+                Detalhes
+              </Link>
+            </li>
+          ))}
+        </List>
       </Container>
     )
   }
