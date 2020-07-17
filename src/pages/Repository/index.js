@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-//import { Container } from './styles'
+import { Loading } from './styles'
+import Container from '../../components/Container'
 import api from '../../services/api'
 
 class Repository extends Component {
@@ -12,11 +13,13 @@ class Repository extends Component {
       }),
     }).isRequired,
   }
+
   state = {
     repository: {},
     issues: [],
     loading: true,
   }
+
   async componentDidMount() {
     const { match } = this.props
     const repositoryName = decodeURIComponent(match.params.repository)
@@ -35,9 +38,13 @@ class Repository extends Component {
       issues: issues.data,
     })
   }
+
   render() {
     const { repository, issues, loading } = this.state
-    return <h1>Repository: {repository.name}</h1>
+    if (loading) {
+      return <Loading>Carregando</Loading>
+    }
+    return <Container>Repository: </Container>
   }
 }
 export default Repository
